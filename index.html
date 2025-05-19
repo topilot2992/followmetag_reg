@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFC Tag Beschreiben</title>
+</head>
+<body>
+  <h1>NFC Tag Beschreiben</h1>
+  <p>Gib den Text ein, der auf den NFC-Tag geschrieben werden soll:</p>
+  <input type="text" id="nfcText" placeholder="Text eingeben" />
+  <button id="writeButton">Auf NFC schreiben</button>
+  <p id="status"></p>
+
+  <script>
+    const writeButton = document.getElementById('writeButton');
+    const statusText = document.getElementById('status');
+
+    writeButton.addEventListener('click', async () => {
+      if (!('NDEFWriter' in window)) {
+        statusText.textContent = 'Web NFC wird von diesem Browser nicht unterstützt.';
+        return;
+      }
+
+      const text = document.getElementById('nfcText').value;
+
+      try {
+        const writer = new NDEFWriter();
+        await writer.write({
+          records: [{ recordType: "text", data: text }]
+        });
+        statusText.textContent = 'Text erfolgreich auf NFC-Tag geschrieben.';
+      } catch (error) {
+        console.error(error);
+        statusText.textContent = 'Fehler: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
